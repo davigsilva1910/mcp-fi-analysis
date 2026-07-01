@@ -1,0 +1,28 @@
+{
+  "name": "cap-datasphere",
+  "version": "1.0.0",
+  "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^4.7.0",
+    "@sap-cloud-sdk/http-client": "^4.7.0",
+    "@sap-cloud-sdk/resilience": "^4.7.0",
+    "@sap/cds": "^9"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2.4",
+    "@sap/cds-dk": "^9"
+  },
+  "cds": {
+    "requires": {
+      "datasphere_test": {
+        "kind": "odata-v4",
+        "credentials": {
+          "destination": "datasphere-test"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true
+}
