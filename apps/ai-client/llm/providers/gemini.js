@@ -16,7 +16,9 @@ const genAI = new GoogleGenerativeAI(
 
 const transport =
     new StreamableHTTPClientTransport(
-        new URL('http://localhost:3002/mcp')
+        new URL('http://localhost:3002/mcp'), {
+            timeout: 120000
+        }
     );
 
 const mcpClient = new Client({
@@ -69,7 +71,7 @@ export async function callGemini(userQuestion) {
     ];
 
     let toolCalls = 0;
-    const MAX_TOOL_CALLS = 3;
+    const MAX_TOOL_CALLS = 10;
 
     while (toolCalls < MAX_TOOL_CALLS) {
 
@@ -94,10 +96,13 @@ export async function callGemini(userQuestion) {
         console.log('Tool chamada:', name);
         console.log('Args:', args);
 
+
+        console.time('callTool');
         const toolResponse = await mcpClient.callTool({
             name,
             arguments: args
         });
+        console.timeEnd('callTool');
 
         const toolData = JSON.parse(
             toolResponse.content[0].text

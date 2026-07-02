@@ -38,12 +38,9 @@ export const compararPeriodos = {
         let params1 = await dataValidation(anoInicial1, anoFinal1, mesInicial1, mesFinal1, diaInicial1, diaFinal1);
         let params2 = await dataValidation(anoInicial2, anoFinal2, mesInicial2, mesFinal2, diaInicial2, diaFinal2);
 
-        const urlCountRecords1 = `${BASE_URL}?$filter=postingDate ge '${params1.dataInicio}' and postingDate le '${params1.dataFim}'&$count=true`
-        const urlCountRecords2 = `${BASE_URL}?$filter=postingDate ge '${params2.dataInicio}' and postingDate le '${params2.dataFim}'&$count=true`
-
         const urlSoma1 = `${BASE_URL}?$apply=filter(postingDate ge '${params1.dataInicio}' and postingDate le '${params1.dataFim}')/aggregate(amountInDocumentCurrent with sum as Total)`
         const urlSoma2 = `${BASE_URL}?$apply=filter(postingDate ge '${params2.dataInicio}' and postingDate le '${params2.dataFim}')/aggregate(amountInDocumentCurrent with sum as Total)`
         
-        return await periodComparison(urlCountRecords1, urlCountRecords2, urlSoma1, urlSoma2);
+        return await periodComparison(urlSoma1, urlSoma2);
     }
 }

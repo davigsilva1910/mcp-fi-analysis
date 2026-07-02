@@ -128,9 +128,9 @@ export async function getTopTotalAmountOfCostCenterByPeriod(url) {
 export async function getSpecificDocument(url) {
   const response = await fetch(url);
 
-  
+
   const data = await response.json();
-  
+
   if (!data.value.length) {
     return {
       found: false,
@@ -180,50 +180,40 @@ export async function getRecordsByPeriod(url) {
   };
 }
 
-export async function periodComparison(urlCountRecords1, urlCountRecords2, urlSoma1, urlSoma2) {
-  const responseCountRecords1 = await fetch(urlCountRecords1)
-  const responseCountRecords2 = await fetch(urlCountRecords2)
-  const responseSoma1 = await fetch(urlSoma1)
-  const responseSoma2 = await fetch(urlSoma2)
+export async function periodComparison( urlSoma1, urlSoma2) {
+  // const responseCountRecords1 = await fetch(urlCountRecords1)
+  // const responseCountRecords2 = await fetch(urlCountRecords2)
+  // const responseSoma1 = await fetch(urlSoma1)
+  // const responseSoma2 = await fetch(urlSoma2)
 
-  if (!responseCountRecords1.ok) {
-    return {
-      found: false,
-      message: "Documentos não encontrados"
-    };
-  }
-  
-  if (!responseCountRecords2.ok) {
-    return {
-      found: false,
-      message: "Documentos não encontrados"
-    };
-  }
-  
+  console.time("all");
+
+  const [
+    responseSoma1,
+    responseSoma2
+  ] = await Promise.all([
+    fetch(urlSoma1),
+    fetch(urlSoma2)
+  ]);
+
+  console.timeEnd("all");
+
   if (!responseSoma1.ok) {
     return {
       found: false,
       message: "Documentos não encontrados"
     };
   }
-  
+
   if (!responseSoma2.ok) {
     return {
       found: false,
       message: "Documentos não encontrados"
     };
   }
-
-  const dataCountRecords1 = await responseCountRecords1.json();
-  const dataCountRecords2 = await responseCountRecords2.json();
   const dataSoma1 = await responseSoma1.json();
   const dataSoma2 = await responseSoma2.json();
 
-  
-  const countRecords1 = dataCountRecords1["@odata.count"];
-  const countRecords2 = dataCountRecords2["@odata.count"];
-
-  
   const total1 = dataSoma1.value?.[0]?.Total ?? 0;
   const total2 = dataSoma2.value?.[0]?.Total ?? 0;
 
@@ -233,12 +223,31 @@ export async function periodComparison(urlCountRecords1, urlCountRecords2, urlSo
 
   return {
     found: true,
-    countRecords1,
-    countRecords2,
-    total1,
-    total2,
-    diferencaPeriodo1e2,
-    porcentagemDiferencaPeriodo
+    resumo: {
+      total1,
+      total2,
+      diferencaPeriodo1e2,
+      porcentagemDiferencaPeriodo
+    }
   };
 
+}
+
+export async function getTotalAmountByPeriod(url) {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    return {
+      found: false,
+      message: "Documentos não encontrados"
+    };
+  }
+
+  const data = await response.json();
+
+
+  return {
+    found: true,
+    data
+  };
 }

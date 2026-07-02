@@ -43,6 +43,7 @@ export async function dataValidation(anoInicial, anoFinal, mesInicial, mesFinal,
         }
     }
 
+
     // return `${process.env.CAP_URL}?$filter=postingDate ge '${dataInicio}' and postingDate le '${dataFim}'`;
     return {
         found: true,

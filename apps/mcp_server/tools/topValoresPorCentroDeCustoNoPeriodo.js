@@ -25,7 +25,7 @@ export const topValoresPorCentroDeCustoNoPeriodo = {
         const {centroDeCustoID, anoInicial, anoFinal, mesInicial, mesFinal, diaInicial, diaFinal} = args;
 
         const parametros = await dataValidation(anoInicial, anoFinal, mesInicial, mesFinal, diaInicial, diaFinal);
-        const url = `${BASE_URL}?$filter=postingDate ge '${parametros.dataInicio}' and postingDate le '${parametros.dataFim}' and costCenter eq '${centroDeCustoID}'&$orderby=amountInDocumentCurrent desc&top=${10}`
+        const url = `${BASE_URL}?$filter=postingDate ge '${parametros.dataInicio}' and postingDate le '${parametros.dataFim}' and costCenter eq '${centroDeCustoID}'&$orderby=amountInDocumentCurrent desc&top=${top}`
 
         return await getTopTotalAmountOfCostCenterByPeriod(url);
     }

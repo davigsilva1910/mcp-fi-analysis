@@ -79,6 +79,10 @@ module.exports = async function () {
     const ds = await cds.connect.to('datasphere_test');
 
     this.on('READ', 'FAC_GL_DOCUMENT_ITEM', async (req) => {
+        console.log('====================');
+        console.dir(req.query, { depth: null });
+        console.log('====================');
+
         const source = mapping.FAC_GL_DOCUMENT_ITEM;
 
         req.query.SELECT.from = {
@@ -100,11 +104,20 @@ module.exports = async function () {
         }
 
 
-        const column = req.query.SELECT.columns?.[0];
+        // const column = req.query.SELECT.columns?.[0];
 
-        const isAggregate = req.query.SELECT.columns?.length === 1 && column?.func;
+        const isAggregate =
+            req.query.SELECT.columns?.some(
+                col => col.func === 'sum' ||
+                    col.func === 'count' ||
+                    col.func === 'avg' ||
+                    col.func === 'min' ||
+                    col.func === 'max'
+            );
 
         if (isAggregate) {
+
+             console.log('ENTROU NO AGGREGATE');
 
             let apply = req.req?.query?.$apply;
 
@@ -113,7 +126,8 @@ module.exports = async function () {
                 apply = apply.replaceAll(creative, physical);
             }
 
-            const encodedApply = encodeURIComponent(apply); 
+            console.log('APPLY FINAL:', apply);
+            const encodedApply = encodeURIComponent(apply);
 
             const response = await executeHttpRequest(
                 {

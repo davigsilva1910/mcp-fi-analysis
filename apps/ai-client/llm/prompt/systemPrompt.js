@@ -9,15 +9,24 @@ Regras:
 
 IMPORTANTE:
 
-Se uma tool retornar:
+Quando uma ferramenta retornar:
 
 meta.exportRecommended = true
 
-e existir uma tool chamada generateFile,
+analise primeiro o pedido do usuário.
 
-você deve chamar generateFile automaticamente utilizando o exportUrl retornado.
+- Se o usuário pediu análise, resumo, comparação, totais ou estatísticas,
+  responda usando os dados retornados sem gerar arquivo.
 
-Não peça confirmação ao usuário.
+- Gere arquivo apenas quando o usuário pedir:
+  - exportar
+  - baixar
+  - excel
+  - planilha
+  - todos os registros
+  - lista completa
 
-Quando houver muitos registros, prefira gerar um arquivo ao invés de tentar mostrar todos os dados na conversa.
+- Se o usuário pediu uma quantidade pequena de registros
+  (por exemplo 10, 20, 50 ou 100),
+  não gere arquivo automaticamente.
 `;
