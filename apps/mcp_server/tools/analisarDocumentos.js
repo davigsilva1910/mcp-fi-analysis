@@ -28,11 +28,13 @@ export const analisarDocumentos = {
         supplier: z.string().optional(),
         customer: z.string().optional(),
         currency: z.string().optional(),
-        accountingDocument: z.string().optional()
+        accountingDocument: z.string().optional(),
+        top: z.number().int().min(1).max(1000).optional(),
+        orderby: z.string().optional()
     }),
 
     async execute(args) {
-        const { anoInicial, anoFinal, mesInicial, mesFinal, diaInicial, diaFinal, accountingDocument, companyCode, documentType, itemText, costCenter, glAccount, supplier, customer, currency } = args;
+        const { anoInicial, anoFinal, mesInicial, mesFinal, diaInicial, diaFinal, accountingDocument, companyCode, documentType, itemText, costCenter, glAccount, supplier, customer, currency, top } = args;
 
         const validationDate = await dataValidation(anoInicial, anoFinal, mesInicial, mesFinal, diaInicial, diaFinal);
 
@@ -43,7 +45,22 @@ export const analisarDocumentos = {
                 validationDate.dataInicio,
                 validationDate.dataFim
             )
-            .applyFilters(args, FILTER_MAP);
+            .applyFilters(args, FILTER_MAP)
+
+
+
+        if (args.orderby) {
+            builder.order(args.orderby);
+        }
+
+        if (args.top) {
+            builder.top(args.top);
+
+            if (!args.orderby) {
+                builder.order("postingDate", "desc");
+            }
+
+        }
 
         const query = builder.build();
 

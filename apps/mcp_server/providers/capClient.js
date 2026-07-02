@@ -3,35 +3,6 @@ const BASE_URL = process.env.CAP_URL
 
 // capClient.js
 
-export async function getLastDocuments(n) {
-
-  const url = `${BASE_URL}?$orderby=postingDate desc&$top=${n}`
-
-  const response = await fetch(url);
-
-
-  if (!response.ok) {
-    return {
-      found: false,
-      message: "Documento não encontrado"
-    };
-  }
-
-  const data = await response.json();
-  const totalRecords = data.value?.length ?? data.length ?? 0;
-  return {
-    found: true,
-    data,
-
-    meta: {
-      exportUrl: url,
-      totalRecords,
-      exportRecommended:
-        totalRecords > 500
-    }
-  };
-}
-
 export async function getTotalAmountOfCostCenterByPeriod(url) {
   const response = await fetch(url);
 
@@ -175,13 +146,7 @@ export async function getAnalysisDocuments(url) {
 
   return {
     found: true,
-    data,
-    meta: {
-      exportUrl: url,
-      totalRecords,
-      exportRecommended:
-        totalRecords > 500
-    }
+    data
   };
 
 
