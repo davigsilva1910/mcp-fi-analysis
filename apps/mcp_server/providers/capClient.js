@@ -2,30 +2,6 @@ import "dotenv/config"
 const BASE_URL = process.env.CAP_URL
 
 // capClient.js
-export async function getDocumentsByPeriod(url) {
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    return {
-      found: false,
-      message: "Documento não encontrado"
-    };
-  }
-
-  const data = await response.json();
-  const totalRecords = data.value?.length ?? data.length ?? 0;
-  return {
-    found: true,
-    data,
-
-    meta: {
-      exportUrl: url,
-      totalRecords,
-      exportRecommended:
-        totalRecords > 500
-    }
-  };
-}
 
 export async function getLastDocuments(n) {
 
@@ -52,37 +28,6 @@ export async function getLastDocuments(n) {
       totalRecords,
       exportRecommended:
         totalRecords > 500
-    }
-  };
-}
-
-export async function getByCostCenter(idCentroDeCusto) {
-
-  const url = `${BASE_URL}?$filter=costCenter eq '${idCentroDeCusto}'`
-
-  const response = await fetch(url);
-
-
-  if (!response.ok) {
-    return {
-      found: false,
-      message: "Documento não encontrado"
-    };
-  }
-
-  const data = await response.json();
-
-  const totalRecords = data.value?.length ?? data.length ?? 0;
-  return {
-    found: true,
-    data,
-
-    meta: {
-      exportUrl: url,
-      totalRecords,
-
-      exportRecommended:
-        (data.value?.length ?? 0) > 500
     }
   };
 }
@@ -118,43 +63,6 @@ export async function getTopTotalAmountOfCostCenterByPeriod(url) {
   }
 
   const data = await response.json();
-
-  return {
-    found: true,
-    data
-  };
-}
-
-export async function getSpecificDocument(url) {
-  const response = await fetch(url);
-
-
-  const data = await response.json();
-
-  if (!data.value.length) {
-    return {
-      found: false,
-      message: "Documento não encontrado."
-    };
-  }
-
-  return {
-    found: true,
-    data
-  };
-}
-
-export async function getSpecificCustomer(url) {
-  const response = await fetch(url);
-
-  const data = await response.json();
-
-  if (!data.value.length) {
-    return {
-      found: false,
-      message: "Documento não encontrado."
-    };
-  }
 
   return {
     found: true,
@@ -250,4 +158,31 @@ export async function getTotalAmountByPeriod(url) {
     found: true,
     data
   };
+}
+
+export async function getAnalysisDocuments(url) {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    return {
+      found: false,
+      message: "Documentos não encontrados"
+    };
+  }
+
+  const data = await response.json();
+
+
+  return {
+    found: true,
+    data,
+    meta: {
+      exportUrl: url,
+      totalRecords,
+      exportRecommended:
+        totalRecords > 500
+    }
+  };
+
+
 }
