@@ -1,6 +1,3 @@
-import "dotenv/config"
-const BASE_URL = process.env.CAP_URL
-
 // capClient.js
 
 export async function getTotalAmountOfCostCenterByPeriod(url) {
@@ -21,42 +18,6 @@ export async function getTotalAmountOfCostCenterByPeriod(url) {
     data
   };
 
-}
-
-export async function getTopTotalAmountOfCostCenterByPeriod(url) {
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    return {
-      found: false,
-      message: "Documentos não encontrados"
-    };
-  }
-
-  const data = await response.json();
-
-  return {
-    found: true,
-    data
-  };
-}
-
-export async function getRecordsByPeriod(url) {
-  const response = await fetch(url);
-
-  const data = await response.json();
-
-  if (!data.value.length) {
-    return {
-      found: false,
-      message: "Documento não encontrado."
-    };
-  }
-
-  return {
-    found: true,
-    data
-  };
 }
 
 export async function periodComparison( urlSoma1, urlSoma2) {
@@ -141,12 +102,25 @@ export async function getAnalysisDocuments(url) {
     };
   }
 
+  
   const data = await response.json();
-
+  
+  let records = 0;
+  if (url.includes("top")) {
+    records = data.value.length;
+  }else {
+    records = data['@odata.count'];
+  }
 
   return {
     found: true,
-    data
+    data,
+    records, 
+    meta: {
+      exportUrl: url,
+      records,
+      exportRecommended: records > 300
+    }
   };
 
 

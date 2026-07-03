@@ -62,6 +62,8 @@ export const analisarDocumentos = {
 
         }
 
+        builder.count();
+
         const query = builder.build();
 
         const url = `${BASE_URL}${query ? `?${query}` : ""}`;

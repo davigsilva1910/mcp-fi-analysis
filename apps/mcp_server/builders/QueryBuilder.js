@@ -6,6 +6,7 @@ class QueryBuilder {
         this.orderBy = null;
         this.topValue = null;
         this.skipValue = null;
+        this.countValue = false;
     }
 
     filter(field, operator, value) {
@@ -22,6 +23,7 @@ class QueryBuilder {
         return this;
     }
 
+    // Método para percorrer todos os argumentos e aplicar os filtros correspondentes com base no mapeamento fornecido
     applyFilters(args, mappings) {
 
         for (const filter of mappings) {
@@ -62,6 +64,10 @@ class QueryBuilder {
         };
 
         return this;
+    }
+
+    count() {
+        this.countValue = true;
     }
 
     postingDateRange(dataInicio, dataFim) {
@@ -114,8 +120,13 @@ class QueryBuilder {
             params.push(`$skip=${this.skipValue}`);
         }
 
-        if (!params.length)
+        if (this.countValue) {
+            params.push(`$count=true`);
+        }
+
+        if (!params.length){
             return "";
+        }
 
         return `${params.join("&")}`;
     }
