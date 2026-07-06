@@ -29,7 +29,9 @@ export const compararPeriodos = {
         mesFinal2: z.number().int().min(1).max(12).optional(),
 
         diaInicial2: z.number().int().min(1).max(31).optional(),
-        diaFinal2: z.number().int().min(1).max(31).optional()
+        diaFinal2: z.number().int().min(1).max(31).optional(),
+        orderby: z.string().optional(),
+        top: z.number().int().min(1).optional()
     }),
 
     async execute(args) {
@@ -38,9 +40,31 @@ export const compararPeriodos = {
         let params1 = await dataValidation(anoInicial1, anoFinal1, mesInicial1, mesFinal1, diaInicial1, diaFinal1);
         let params2 = await dataValidation(anoInicial2, anoFinal2, mesInicial2, mesFinal2, diaInicial2, diaFinal2);
 
-        const urlSoma1 = `${BASE_URL}?$apply=filter(postingDate ge '${params1.dataInicio}' and postingDate le '${params1.dataFim}')/aggregate(amountInDocumentCurrent with sum as Total)`
-        const urlSoma2 = `${BASE_URL}?$apply=filter(postingDate ge '${params2.dataInicio}' and postingDate le '${params2.dataFim}')/aggregate(amountInDocumentCurrent with sum as Total)`
+        const url1 = `${BASE_URL}?$apply=filter(postingDate ge '${params1.dataInicio}' and postingDate le '${params1.dataFim}')/aggregate(amountInDocumentCurrent with sum as Total,$count as TotalCount)`
+        const url2 = `${BASE_URL}?$apply=filter(postingDate ge '${params2.dataInicio}' and postingDate le '${params2.dataFim}')/aggregate(amountInDocumentCurrent with sum as Total,$count as TotalCount)`
+
+        const orderbyParam = args.orderby
+        if (orderbyParam) {
+            if (orderby === 'postingDate desc' ||
+                orderby === 'postingDate asc' ||
+                orderby === 'documentDate desc' ||
+                orderby === 'documentDate asc') {
+                url1 += `&$orderby=${orderbyParam}`;
+                url2 += `&$orderby=${orderbyParam}`;
+            }
+        }
+
+        const top = args.top
+        if(top) {
+            if(orderby === undefined) {
+                url1 += `&$orderby=postingDate desc&$top=${top}`
+                url2 += `&$orderby=postingDate desc&$top=${top}`
+            }
+            url1 += `&$top=${top}`
+            url2 += `&$top=${top}`
+        }
+
         
-        return await periodComparison(urlSoma1, urlSoma2);
+        return await periodComparison(url1, url2);
     }
 }

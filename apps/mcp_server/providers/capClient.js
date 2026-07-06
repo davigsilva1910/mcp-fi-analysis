@@ -21,13 +21,6 @@ export async function getTotalAmountOfCostCenterByPeriod(url) {
 }
 
 export async function periodComparison( urlSoma1, urlSoma2) {
-  // const responseCountRecords1 = await fetch(urlCountRecords1)
-  // const responseCountRecords2 = await fetch(urlCountRecords2)
-  // const responseSoma1 = await fetch(urlSoma1)
-  // const responseSoma2 = await fetch(urlSoma2)
-
-  console.time("all");
-
   const [
     responseSoma1,
     responseSoma2
@@ -35,8 +28,6 @@ export async function periodComparison( urlSoma1, urlSoma2) {
     fetch(urlSoma1),
     fetch(urlSoma2)
   ]);
-
-  console.timeEnd("all");
 
   if (!responseSoma1.ok) {
     return {
@@ -55,8 +46,12 @@ export async function periodComparison( urlSoma1, urlSoma2) {
   const dataSoma2 = await responseSoma2.json();
 
   const total1 = dataSoma1.value?.[0]?.Total ?? 0;
-  const total2 = dataSoma2.value?.[0]?.Total ?? 0;
+  const totalRecords1 = dataSoma1.value?.[0]?.TotalCount ?? 0;
 
+  const total2 = dataSoma2.value?.[0]?.Total ?? 0;
+  const totalRecords2 = dataSoma2.value?.[0]?.TotalCount ?? 0;
+
+  const diferencaRecords = totalRecords1 - totalRecords2
   const diferencaPeriodo1e2 = total1 - total2;
   const porcentagemDiferencaPeriodo = (diferencaPeriodo1e2 / total2) * 100;
 
@@ -66,6 +61,9 @@ export async function periodComparison( urlSoma1, urlSoma2) {
     resumo: {
       total1,
       total2,
+      totalRecords1,
+      totalRecords2,
+      diferencaRecords,
       diferencaPeriodo1e2,
       porcentagemDiferencaPeriodo
     }
