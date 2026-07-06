@@ -86,6 +86,16 @@ class ApplyBuilder {
         return this;
     }
 
+    postingDateRange(dataInicio, dataFim) {
+        if (dataInicio === dataFim) {
+            return this.filter("postingDate", "eq", dataInicio);
+        } else {
+            this.filter("postingDate", "ge", dataInicio);
+            this.filter("postingDate", "le", dataFim);
+            return this;
+        }
+    }
+
 
     build() {
         const applyParts = [];
