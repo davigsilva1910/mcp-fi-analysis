@@ -123,3 +123,32 @@ export async function getAnalysisDocuments(url) {
 
 
 }
+
+export async function getFinancialMetrics(url) {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    return {
+      found: false,
+      message: "Documentos não encontrados"
+    };
+  }
+
+  
+  const data = await response.json();
+  
+  let records = 0;
+  if (url.includes("top")) {
+    records = data.value.length;
+  }else {
+    records = data['@odata.count'];
+  }
+
+  return {
+    found: true,
+    data,
+    records
+  };
+
+
+}

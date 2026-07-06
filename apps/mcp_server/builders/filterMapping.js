@@ -1,48 +1,87 @@
 // Mapa de filtros de argumentos que correspondem aos campos
-export const FILTER_MAP = [
-    {
-        arg: "companyCode",
+export const FILTER_MAP = {
+    companyCode: {
         field: "companyCode",
-        operator: "eq"        
+        operator: "eq"
     },
-    {
-        arg: "documentType",
+    documentType: {
         field: "documentType",
         operator: "eq"
     },
-    {
-        arg: "itemText",
+    itemText: {
         field: "itemText",
         operator: "eq"
     },
-    {
-        arg: "costCenter",
+    costCenter: {
         field: "costCenter",
         operator: "eq"
-    }, 
-    {
-        arg: "glAccount",
+    },
+    glAccount: {
         field: "glAccount",
         operator: "eq"
     },
-    {
-        arg: "supplier",
+    supplier: {
         field: "supplier",
         operator: "eq"
     },
-    {
-        arg: "customer",
+    customer: {
         field: "customer",
         operator: "eq"
-    }, 
-    {
-        arg: "currency",
+    },
+    currency: {
         field: "currency",
         operator: "eq"
-    }, 
-    {
-        arg: "accountingDocument",
+    },
+    accountingDocument: {
         field: "accountingDocument",
         operator: "eq"
     }
-]
+};
+
+export const AGGREGATE_MAP = {
+    sum: {
+        alias: "Total"
+    },
+    average: {
+        alias: "Media"
+    },
+    min: {
+        alias: "Minimo"
+    },
+    max: {
+        alias: "Maximo"
+    },
+    $count: {
+        alias: "TotalRecords"
+    }
+};
+
+export const GROUPBY_MAP = {
+    companyCode: {
+        field: "companyCode"
+    },
+    documentType: {
+        field: "documentType"
+    },
+    costCenter: {
+        field: "costCenter"
+    },
+    glAccount: {
+        field: "glAccount"
+    },
+    supplier: {
+        field: "supplier"
+    },
+    customer: {
+        field: "customer"
+    },
+    currency: {
+        field: "currency"
+    },
+    postingDate: {
+        field: "postingDate"
+    },
+    accountingDocument: {
+        field: "accountingDocument"
+    }
+};

@@ -25,17 +25,19 @@ class ApplyBuilder {
 
     applyFilters(args, mappings) {
 
-        for (const filter of mappings) {
+        for (const arg in args) {
 
-            const value = args[filter.arg];
+            const config = mappings[arg];
 
-            if (value !== undefined) {
-                this.filter(
-                    filter.field,
-                    filter.operator,
-                    value
-                );
+            if (!config) {
+                continue;
             }
+
+            this.filter(
+                config.field,
+                config.operator,
+                args[arg]
+            );
         }
 
         return this;
@@ -62,6 +64,7 @@ class ApplyBuilder {
 
     count() {
         this.countValue = true;
+        return this;
     }
 
     aggregate(arg, func, alias) {
@@ -77,11 +80,55 @@ class ApplyBuilder {
         return this;
     }
 
+    applyAggregates(args, mappings) {
+
+        if (!args.aggregates) {
+            return this;
+        }
+
+        for (const aggregate of args.aggregates) {
+
+            const config = mappings[aggregate.func];
+
+            if (!config) {
+                continue;
+            }
+
+            this.aggregate(
+                aggregate.field,
+                aggregate.func,
+                aggregate.alias ?? config.alias
+            );
+        }
+
+        return this;
+    }
+
     groupby(field) {
         if (field === undefined || field === null || field === "")
             return this;
 
         this.groupbyfields.push(field);
+
+        return this;
+    }
+
+    applyGroupBy(args, mappings) {
+
+        if (!args.groupBy) {
+            return this;
+        }
+
+        for (const field of args.groupBy) {
+
+            const config = mappings[field];
+
+            if (!config) {
+                continue;
+            }
+
+            this.groupby(config.field);
+        }
 
         return this;
     }

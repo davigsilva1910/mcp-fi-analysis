@@ -40,6 +40,31 @@ export const obterMetricasFinanceiras = {
                 validationDate.dataInicio,
                 validationDate.dataFim
             )
+            .applyFilters(args, FILTER_MAP)
+            .applyAggregates(args, AGGREGATE_MAP)
+            .applyGroupBy(args, GROUPBY_MAP);
 
+
+        if (args.orderby) {
+            builder.order(args.orderby);
+        }
+
+        if (args.top) {
+            builder.top(args.top);
+
+            if (!args.orderby) {
+                builder.order("postingDate", "desc");
+            }
+
+        }
+
+
+        builder.count();
+
+        const query = builder.build();
+
+        const url = `${BASE_URL}${query ? `?${query}` : ""}`;
+
+        return await getFinancialMetrics(url)
     }
 }

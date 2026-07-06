@@ -68,6 +68,7 @@ class QueryBuilder {
 
     count() {
         this.countValue = true;
+        return this;
     }
 
     postingDateRange(dataInicio, dataFim) {
