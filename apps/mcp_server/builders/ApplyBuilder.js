@@ -1,6 +1,3 @@
-import "dotenv/config"
-const BASE_URL = process.env.CAP_URL
-
 class ApplyBuilder {
     constructor() {
         this.filters = [];
@@ -177,20 +174,3 @@ class ApplyBuilder {
 
     }
 }
-
-const url = new ApplyBuilder()
-
-url.filter("postingDate", "ge", '20220101')
-    .filter("postingDate", "le", '20221231')
-    .filter("costCenter", "eq", '1000')
-    .aggregate("amountInCompanyCurrency", "sum", "totalAmount")
-    .aggregate("$count", null, "totalCount")
-    .order("postingDate", "desc")
-    .top(10)
-    .groupby("postingDate")
-
-const queryurl = url.build()
-
-const urlFinal = `${BASE_URL}${queryurl ? `?${queryurl}` : ""}`;
-
-console.log(urlFinal)

@@ -117,7 +117,7 @@ module.exports = async function () {
 
         if (isAggregate) {
 
-             console.log('ENTROU NO AGGREGATE');
+            console.log('ENTROU NO AGGREGATE');
 
             let apply = req.req?.query?.$apply;
 
@@ -128,18 +128,38 @@ module.exports = async function () {
 
             console.log('APPLY FINAL:', apply);
             const encodedApply = encodeURIComponent(apply);
+            let url = `/${source.space}/${source.asset}/${source.asset}?$apply=${encodedApply}`;
 
-            const response = await executeHttpRequest(
-                {
-                    destinationName: 'datasphere-test'
-                },
-                {
-                    method: 'GET',
-                    url: `/${source.space}/${source.asset}/${source.asset}?$apply=${encodedApply}`
-                }
-            );
+            const orderby = req.req?.query?.$orderby;
+            if (orderby) {
+                const encodedOrderby = encodeURIComponent(orderby);
+                url += `&$orderby=${encodedOrderby}`;
+            }
 
-            return response.data.value;
+            const top = req.req?.query?.$top;
+            if (top) {
+                url += `&$top=${top}`;
+            }
+
+            try {
+                const response = await executeHttpRequest(
+                    {
+                        destinationName: 'datasphere-test'
+                    },
+                    {
+                        method: 'GET',
+                        url
+                    }
+                );
+
+                return response.data.value;
+            }
+            catch (err) {
+                console.error('STATUS:', err.response?.status);
+                console.error('DATA:', JSON.stringify(err.response?.data, null, 2));
+                throw err;
+            }
+
         }
 
         const result = await ds.run(req.query);
