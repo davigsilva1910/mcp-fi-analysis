@@ -87,8 +87,6 @@ export const obterMetricasFinanceiras = {
 
         const url = `${BASE_URL}${query ? `?${query}` : ""}`;
 
-        console.log("URL FINAL:", url);
-
         return await getFinancialMetrics(url)
     }
 }

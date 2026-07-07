@@ -79,10 +79,6 @@ module.exports = async function () {
     const ds = await cds.connect.to('datasphere_test');
 
     this.on('READ', 'FAC_GL_DOCUMENT_ITEM', async (req) => {
-        console.log('====================');
-        console.dir(req.query, { depth: null });
-        console.log('====================');
-
         const source = mapping.FAC_GL_DOCUMENT_ITEM;
 
         req.query.SELECT.from = {
@@ -95,8 +91,6 @@ module.exports = async function () {
 
         translate(req.query.SELECT)
 
-
-        console.dir(req.query.SELECT, { depth: null });
 
         const isExport = req.req?.query?.export === 'true';
         if (isExport && req.query.SELECT.limit) {
@@ -117,8 +111,6 @@ module.exports = async function () {
 
         if (isAggregate) {
 
-            console.log('ENTROU NO AGGREGATE');
-
             let apply = req.req?.query?.$apply;
 
 
@@ -126,7 +118,6 @@ module.exports = async function () {
                 apply = apply.replaceAll(creative, physical);
             }
 
-            console.log('APPLY FINAL:', apply);
             const encodedApply = encodeURIComponent(apply);
             let url = `/${source.space}/${source.asset}/${source.asset}?$apply=${encodedApply}`;
 
@@ -164,17 +155,12 @@ module.exports = async function () {
 
         const result = await ds.run(req.query);
 
-        console.log(result.length);
-        console.dir(result[0], { depth: null });
-
         if (
             req.query.SELECT.columns?.length === 1 &&
             req.query.SELECT.columns[0].func
         ) {
             return result;
         }
-
-        console.log(req.query);
 
         const mappedRecords = result.map(row => ({
             ID: row.ID,
