@@ -25,6 +25,7 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: cap-datasphere-destination
+      - name: cap-datasphere-auth
 
 resources:
   - name: cap-datasphere-destination
@@ -32,3 +33,16 @@ resources:
     parameters:
       service: destination
       service-plan: lite
+  - name: cap-datasphere-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: cap-datasphere-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"

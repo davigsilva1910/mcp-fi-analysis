@@ -5,7 +5,8 @@
     "@sap-cloud-sdk/connectivity": "^4.7.0",
     "@sap-cloud-sdk/http-client": "^4.7.0",
     "@sap-cloud-sdk/resilience": "^4.7.0",
-    "@sap/cds": "^9"
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2.4",
@@ -18,6 +19,9 @@
         "credentials": {
           "destination": "datasphere-test"
         }
+      },
+      "[production]": {
+        "auth": "mocked"
       }
     }
   },

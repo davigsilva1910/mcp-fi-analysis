@@ -1,0 +1,14 @@
+applications:
+  - name: fi-analysis-mcp
+    memory: 512M
+    disk_quota: 1G
+    instances: 1
+
+    buildpacks:
+      - nodejs_buildpack
+
+    command: npm start
+
+    env:
+      NODE_ENV: production
+      CAP_URL: https://a7457694trial-integration-dev-5hpqf33g-dev2-cap-datasphere-srv.cfapps.ap21.hana.ondemand.com/odata/v4/my/FAC_GL_DOCUMENT_ITEM
