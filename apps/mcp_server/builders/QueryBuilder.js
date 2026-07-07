@@ -26,17 +26,19 @@ class QueryBuilder {
     // Método para percorrer todos os argumentos e aplicar os filtros correspondentes com base no mapeamento fornecido
     applyFilters(args, mappings) {
 
-        for (const filter of mappings) {
+        for (const arg in args) {
 
-            const value = args[filter.arg];
+            const config = mappings[arg];
 
-            if (value !== undefined) {
-                this.filter(
-                    filter.field,
-                    filter.operator,
-                    value
-                );
+            if (!config) {
+                continue;
             }
+
+            this.filter(
+                config.field,
+                config.operator,
+                args[arg]
+            );
         }
 
         return this;

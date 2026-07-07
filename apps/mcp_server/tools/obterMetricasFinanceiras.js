@@ -1,8 +1,12 @@
+import "dotenv/config"
+const BASE_URL = process.env.CAP_URL
+
 import { z } from 'zod'
 
 import { dataValidation } from '../services/dataValidation.js'
 import ApplyBuilder from '../builders/ApplyBuilder.js'
-import { FILTER_MAP } from '../builders/filterMapping.js'
+import { FILTER_MAP, AGGREGATE_MAP, GROUPBY_MAP } from '../builders/filterMapping.js'
+import { getFinancialMetrics } from '../providers/capClient.js'
 
 export const obterMetricasFinanceiras = {
     name: "obterMetricasFinanceiras",
@@ -26,7 +30,25 @@ export const obterMetricasFinanceiras = {
         currency: z.string().optional(),
         accountingDocument: z.string().optional(),
         top: z.number().int().min(1).max(1000).optional(),
-        orderby: z.string().optional()
+        orderby: z.string().optional(),
+        aggregates: z.array(
+            z.object({
+                field: z.enum([
+                    "amountInDocumentCurrent",
+                    "accountingDocument",
+                    "lineItem"
+                ]),
+                func: z.enum([
+                    "sum",
+                    "average",
+                    "min",
+                    "max",
+                    "$count"
+                ]),
+                alias: z.string().optional()
+            })
+        ),
+        groupBy: z.array(z.string()).optional()
     }),
 
     async execute(args) {
@@ -41,7 +63,7 @@ export const obterMetricasFinanceiras = {
                 validationDate.dataFim
             )
             .applyFilters(args, FILTER_MAP)
-            .applyAggregates(args, AGGREGATE_MAP)
+            .applyAggregates(args)
             .applyGroupBy(args, GROUPBY_MAP);
 
 
@@ -64,6 +86,8 @@ export const obterMetricasFinanceiras = {
         const query = builder.build();
 
         const url = `${BASE_URL}${query ? `?${query}` : ""}`;
+
+        console.log("URL FINAL:", url);
 
         return await getFinancialMetrics(url)
     }

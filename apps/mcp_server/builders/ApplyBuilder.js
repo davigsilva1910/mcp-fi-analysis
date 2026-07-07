@@ -2,7 +2,7 @@ class ApplyBuilder {
     constructor() {
         this.filters = [];
         this.aggregates = [];
-        this.groupbyfields = [];
+        this.groupByFields = [];
         this.topValue = null;
         this.skipValue = null;
         this.orderBy = null;
@@ -27,7 +27,7 @@ class ApplyBuilder {
 
         for (const arg in args) {
 
-            const config = mappings[arg];
+            const config = mappings[arg]; // Pega o mapping passado pela tool
 
             if (!config) {
                 continue;
@@ -67,20 +67,22 @@ class ApplyBuilder {
         return this;
     }
 
-    aggregate(arg, func, alias) {
-        if (arg === undefined || arg === null || arg === "")
+    aggregate(field, func, alias) {
+
+        if (!field || !func) {
             return this;
+        }
 
         this.aggregates.push({
-            arg,
+            field,
             func,
             alias
-        })
+        });
 
         return this;
     }
 
-    applyAggregates(args, mappings) {
+    applyAggregates(args) {
 
         if (!args.aggregates) {
             return this;
@@ -88,16 +90,11 @@ class ApplyBuilder {
 
         for (const aggregate of args.aggregates) {
 
-            const config = mappings[aggregate.func];
-
-            if (!config) {
-                continue;
-            }
-
             this.aggregate(
                 aggregate.field,
                 aggregate.func,
-                aggregate.alias ?? config.alias
+                aggregate.alias ||
+                `${aggregate.func}_${aggregate.field}`
             );
         }
 
@@ -105,10 +102,10 @@ class ApplyBuilder {
     }
 
     groupby(field) {
-        if (field === undefined || field === null || field === "")
+        if (!field)
             return this;
 
-        this.groupbyfields.push(field);
+        this.groupByFields.push(field);
 
         return this;
     }
@@ -146,41 +143,39 @@ class ApplyBuilder {
 
     build() {
         const applyParts = [];
-        const queryParts = []
+        const params = []
 
         if (this.filters.length) {
-
-            const filter = this.filters
-                .map(f => {
-
-                    const value =
-                        typeof f.value === "string"
-                            ? `'${f.value}'`
-                            : f.value;
-
-                    return `${f.field} ${f.operator} ${value}`;
-
-                })
-                .join(" and ");
-
-            applyParts.push(`filter(${filter})`);
+            const filterExpression =
+                this.filters
+                    .map(f => {
+                        const value =
+                            typeof f.value === "string"
+                                ? `'${f.value}'`
+                                : f.value;
+                        return `${f.field} ${f.operator} ${value}`;
+                    })
+                    .join(" and ");
+            applyParts.push(
+                `filter(${filterExpression})`
+            );
         }
+
 
         const aggregateExpression = this.aggregates
             .map(a => {
-                if (a.arg === '$count') {
-                    return `${a.arg} as ${a.alias}`;
+                if (a.func === '$count') {
+                    return `${a.func} as ${a.alias}`;
                 }
 
-                return `${a.arg} with ${a.func} as ${a.alias}`;
+                return `${a.field} with ${a.func} as ${a.alias}`;
             })
             .join(",");
 
 
-        if (this.groupbyfields.length) {
-
-            const groupBy = this.groupbyfields.join(",");
-
+        if (this.groupByFields.length) {
+            const groupBy =
+                this.groupByFields.join(",");
             if (aggregateExpression) {
                 applyParts.push(
                     `groupby((${groupBy}),aggregate(${aggregateExpression}))`
@@ -190,44 +185,47 @@ class ApplyBuilder {
                     `groupby((${groupBy}))`
                 );
             }
-        }
-        else if (aggregateExpression) {
+        } else if (aggregateExpression) {
             applyParts.push(
                 `aggregate(${aggregateExpression})`
             );
         }
 
+
+        if (applyParts.length) {
+            params.push(
+                `$apply=${encodeURIComponent(
+                    applyParts.join("/")
+                )}`
+            );
+        }
+
+
         if (this.orderBy) {
-            queryParts.push(
+            params.push(
                 `$orderby=${this.orderBy.field} ${this.orderBy.direction}`
             );
         }
 
         if (this.topValue !== null) {
-            queryParts.push(`$top=${this.topValue}`);
+            params.push(`$top=${this.topValue}`);
         }
 
         if (this.skipValue !== null) {
-            queryParts.push(`$skip=${this.skipValue}`);
+            params.push(`$skip=${this.skipValue}`);
         }
 
         if (this.countValue) {
-            queryParts.push(`$count=true`);
+            params.push(`$count=true`);
         }
 
         if (!applyParts.length && !queryParts.length) {
             return "";
         }
 
-
-        if (applyParts.length) {
-            queryParts.unshift(
-                `${applyParts.join("/")}`
-            );
-        }
-
-
-        return `$apply=${queryParts.join("&")}`;
+        return params.join("&");
 
     }
 }
+
+export default ApplyBuilder;
