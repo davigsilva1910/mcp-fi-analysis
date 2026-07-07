@@ -110,7 +110,7 @@ module.exports = async function () {
             req.query.SELECT.columns?.some(
                 col => col.func === 'sum' ||
                     col.func === 'count' ||
-                    col.func === 'avg' ||
+                    col.func === 'average' ||
                     col.func === 'min' ||
                     col.func === 'max'
             );
