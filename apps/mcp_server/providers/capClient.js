@@ -1,26 +1,4 @@
-// capClient.js
-
-// export async function getTotalAmountOfCostCenterByPeriod(url) {
-//   const response = await fetch(url);
-
-//   if (!response.ok) {
-//     return {
-//       found: false,
-//       message: "Documentos não encontrados"
-//     };
-//   }
-
-//   const data = await response.json();
-
-
-//   return {
-//     found: true,
-//     data
-//   };
-
-// }
-
-export async function periodComparison( urlSoma1, urlSoma2) {
+export async function periodComparison(urlSoma1, urlSoma2) {
   const [
     responseSoma1,
     responseSoma2
@@ -70,25 +48,6 @@ export async function periodComparison( urlSoma1, urlSoma2) {
   };
 
 }
-
-// export async function getTotalAmountByPeriod(url) {
-//   const response = await fetch(url);
-
-//   if (!response.ok) {
-//     return {
-//       found: false,
-//       message: "Documentos não encontrados"
-//     };
-//   }
-
-//   const data = await response.json();
-
-
-//   return {
-//     found: true,
-//     data
-//   };
-// }
 
 export async function getAnalysisDocuments(url) {
   const response = await fetch(url);
