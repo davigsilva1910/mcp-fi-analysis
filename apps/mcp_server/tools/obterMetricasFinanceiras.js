@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { dataValidation } from '../services/dataValidation.js'
 import ApplyBuilder from '../builders/ApplyBuilder.js'
-import { FILTER_MAP, AGGREGATE_MAP, GROUPBY_MAP } from '../builders/filterMapping.js'
+import { FILTER_MAP, GROUPBY_MAP } from '../builders/filterMapping.js'
 import { getFinancialMetrics } from '../providers/capClient.js'
 
 export const obterMetricasFinanceiras = {
