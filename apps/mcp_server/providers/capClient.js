@@ -111,3 +111,21 @@ export async function getFinancialMetrics(url) {
 
 
 }
+
+export async function getLatestDocuments(url) {
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    return {
+      found: false,
+      message: "Documentos não encontrados"
+    };
+  }
+
+  const data = await response.json();
+  
+  return {
+    found: true,
+    data
+  };
+}
