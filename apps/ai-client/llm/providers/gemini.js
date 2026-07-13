@@ -16,7 +16,7 @@ const genAI = new GoogleGenerativeAI(
 
 const transport =
     new StreamableHTTPClientTransport(
-        new URL('http://localhost:3002/mcp'), {
+        new URL(process.env.MCP_URL), {
             timeout: 120000
         }
     );
@@ -92,23 +92,23 @@ export async function callGemini(userQuestion) {
 
         const { name, args } = functionPart.functionCall;
 
-        console.log('\n====================');
-        console.log('Tool chamada:', name);
-        console.log('Args:', args);
+        // console.log('\n====================');
+        // console.log('Tool chamada:', name);
+        // console.log('Args:', args);
 
 
-        console.time('callTool');
+        // console.time('callTool');
         const toolResponse = await mcpClient.callTool({
             name,
             arguments: args
         });
-        console.timeEnd('callTool');
+        // console.timeEnd('callTool');
 
         const toolData = JSON.parse(
             toolResponse.content[0].text
         );
 
-        console.log('Resposta da tool recebida');
+        // console.log('Resposta da tool recebida');
 
         // =========================
         // 🔥 INTERCEPTOR DE FILE
@@ -125,8 +125,8 @@ export async function callGemini(userQuestion) {
 
             await fs.writeFile(filePath, buffer);
 
-            console.log('\n📁 Arquivo salvo automaticamente:');
-            console.log(filePath);
+            // console.log('\n📁 Arquivo salvo automaticamente:');
+            // console.log(filePath);
         }
 
         // preserva contexto do Gemini
