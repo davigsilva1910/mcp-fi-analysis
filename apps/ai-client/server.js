@@ -8,12 +8,20 @@ app.use(cors());
 
 app.use(express.json());
 
+const sessions = new Map();
+
 app.post("/chat", async (req, res) => {
     try {
 
-        const { question } = req.body;
+        const { question, sessionId } = req.body;
 
-        const answer = await callGemini(question);
+        if (!sessions.has(sessionId)) {
+            sessions.set(sessionId, [])
+        }
+
+        const history = sessions.get(sessionId)
+
+        const answer = await callGemini(question, history);
 
         res.json({
             success: true,
