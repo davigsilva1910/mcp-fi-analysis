@@ -156,6 +156,12 @@ export async function callGemini(
                 filePath,
                 buffer
             );
+
+            return {
+                type: 'file',
+                filename: toolData.filename,
+                downloadUrl: `/download/${toolData.filename}`
+            }
         }
 
         

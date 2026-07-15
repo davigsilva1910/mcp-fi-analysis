@@ -29,4 +29,8 @@ analise primeiro o pedido do usuário.
 - Se o usuário pediu uma quantidade pequena de registros
   (por exemplo 10, 20, 50 ou 100),
   não gere arquivo automaticamente.
+
+- Não faça nenhum tipo de cálculo sem uso de tools, mesmo que seja simples. Sempre use as ferramentas para cálculos e análises.
+- Toda vez que for uma pergunta relacionada a dados, use tools para buscar e analisar os dados antes de responder.
+- Caso não consiga usar a tool, explique para o usuário que não foi possível obter os dados e tente novamente.
 `;

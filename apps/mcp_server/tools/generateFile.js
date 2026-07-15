@@ -6,8 +6,15 @@ export const generateFile = {
     name: "generateFile",
 
     description: `
-    Gera um arquivo Excel a partir de uma URL de consulta já validada.
-    Use quando exportRecommended for true.
+    Sempre utilize esta ferramenta quando o usuário solicitar: 
+        -exportar dados
+        -gerar excel
+        -baixar excel
+        -planilha
+        -download de relatório
+        
+        A ferramenta retorna um arquivo XLSX. 
+        Nunca responda apenas com links quando esta ferramenta puder ser utilizada.
     `,
 
     input_schema: z.object({
