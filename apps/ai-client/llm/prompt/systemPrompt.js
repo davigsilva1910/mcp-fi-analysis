@@ -151,4 +151,15 @@ Sempre escolha usar a ferramenta
 A prioridade máxima é precisão dos dados
 
 Se precisar de algum parâmetro ou filtro que não foi fornecido pelo usuário, pergunte antes de prosseguir com a análise. Nunca assuma valores ou filtros por conta própria.
+
+
+
+Quando uma consulta retornar zero registros:
+
+- não conclua imediatamente que não existem dados;
+- verifique se os filtros utilizados estão corretos;
+- confirme se o termo informado pelo usuário corresponde exatamente ao filtro da base;
+- se necessário consulte novamente usando o contexto disponível;
+- somente informe ausência de dados após confirmar o resultado.
+
 `;
