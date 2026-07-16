@@ -112,17 +112,27 @@ module.exports = async function () {
         if (isAggregate) {
 
             let apply = req.req?.query?.$apply;
+            
+            let orderby = req.req?.query?.$orderby;
+            if (req.req?.query?.$orderby) {
+                delete req.req.query.$orderby;
+            } // Remove o parâmetro $orderby da query para evitar conflitos com a agregação
 
-
+            // Object.entries(FIELD_MAP) armazena pares de chave-valor do objeto FIELD_MAP
+            // O const guarda as chaves e valores em ordem, pois o FIELD_MAP é um objeto
+            // creative guarda a chave do FIELD_MAP e physical guarda o valor do FIELD_MAP
             for (const [creative, physical] of Object.entries(FIELD_MAP)) {
-                apply = apply.replaceAll(creative, physical);
+                apply = apply.replaceAll(creative, physical); // Aqui realiza a troca do campo criativo para o campo físico
             }
 
             const encodedApply = encodeURIComponent(apply);
             let url = `/${source.space}/${source.asset}/${source.asset}?$apply=${encodedApply}`;
 
-            const orderby = req.req?.query?.$orderby;
+
             if (orderby) {
+                for (const [creative, physical] of Object.entries(FIELD_MAP)) {
+                    orderby = orderby.replaceAll(creative, physical); // Aqui realiza a troca do campo criativo para o campo físico
+                } // Faz a tradução do campo criativo para o campo físico no parâmetro $orderby, usando o FIELD_MAP
                 const encodedOrderby = encodeURIComponent(orderby);
                 url += `&$orderby=${encodedOrderby}`;
             }
@@ -143,7 +153,29 @@ module.exports = async function () {
                     }
                 );
 
-                return response.data.value;
+                // const REVERSE_FIELD_MAP = Object.fromEntries(
+                //     Object.entries(FIELD_MAP).map(([creative, physical]) => [physical, creative])
+                // ); // Realiza uma inversão do FIELD_MAP, trocando as chaves pelos valores e vice-versa
+
+                const aggregatedResult = response.data.value
+                for (const record of aggregatedResult) {
+                    // Pega todas as chaves do objeto record, que são os campos retornados da agregação. 
+                    // São os campos físicos do Datasphere, que precisam ser mapeados para os campos criativos do CDS
+                    const chavesAggregatedResult = Object.keys(record);
+
+                    for (const chave of chavesAggregatedResult) {
+                        const mapeamento = Object.entries(FIELD_MAP).find(([creative, physical]) => physical === chave); // Aqui realiza a busca do mapeamento do campo físico para o campo criativo, usando o FIELD_MAP
+    
+                        if (mapeamento) {
+                            const creativeKey = mapeamento[0]; // Pega a chave criativa no mapeamento
+    
+                            record[creativeKey] = record[chave]; // Adiciona o campo criativo ao objeto record, com o valor do campo físico
+    
+                            delete record[chave]; // Remove o campo físico do objeto record
+                        }
+                    }
+                }
+                return aggregatedResult;
             }
             catch (err) {
                 console.error('STATUS:', err.response?.status);
