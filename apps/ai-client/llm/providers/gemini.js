@@ -50,17 +50,14 @@ async function getGeminiTools() {
     }));
 }
 
-export async function callGemini(
-    userQuestion,
-    history = []
-) {
+export async function callGemini(userQuestion, history = []) {
 
     const tools = await getGeminiTools();
 
     const model = genAI.getGenerativeModel({
         model: llmConfig.model,
         tools,
-        systemInstruction: systemPrompt
+        systemInstruction: systemPrompt // Instrução gerada por prompt
     });
 
     history.push({
