@@ -72,12 +72,7 @@ export async function getAnalysisDocuments(url) {
   return {
     found: true,
     data,
-    records, 
-    meta: {
-      exportUrl: url,
-      records,
-      exportRecommended: records > 300
-    }
+    records
   };
 
 

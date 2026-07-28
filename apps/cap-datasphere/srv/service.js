@@ -91,13 +91,6 @@ module.exports = async function () {
 
         translate(req.query.SELECT)
 
-
-        const isExport = req.req?.query?.export === 'true';
-        if (isExport && req.query.SELECT.limit) {
-            delete req.query.SELECT.limit;
-        }
-
-
         // const column = req.query.SELECT.columns?.[0];
 
         const isAggregate =

@@ -126,41 +126,6 @@ export async function callGemini(userQuestion, history = []) {
                     toolResponse.content[0].text
             };
         }
-
-        if (toolData?.type === 'file') {
-
-            const downloadsDir =
-                path.resolve('./downloads');
-
-            await fs.mkdir(
-                downloadsDir,
-                { recursive: true }
-            );
-
-            const buffer =
-                Buffer.from(
-                    toolData.data,
-                    'base64'
-                );
-
-            const filePath =
-                path.join(
-                    downloadsDir,
-                    toolData.filename
-                );
-
-            await fs.writeFile(
-                filePath,
-                buffer
-            );
-
-            return {
-                type: 'file',
-                filename: toolData.filename,
-                downloadUrl: `/download/${toolData.filename}`
-            }
-        }
-
         
         history.push(
             candidate.content
