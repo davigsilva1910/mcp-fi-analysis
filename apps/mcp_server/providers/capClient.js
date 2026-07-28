@@ -49,6 +49,49 @@ export async function periodComparison(urlSoma1, urlSoma2) {
 
 }
 
+export async function documentComparison(url1, url2) {
+  const [
+    responseUrl1,
+    responseUrl2
+  ] = await Promise.all([
+    fetch(url1),
+    fetch(url2)
+  ]);
+
+  if (!responseUrl1.ok) {
+    return {
+      found: false,
+      message: "Documentos não encontrados"
+    };
+  }
+
+  if (!responseUrl2.ok) {
+    return {
+      found: false,
+      message: "Documentos não encontrados"
+    };
+  }
+  const data1 = await responseUrl1.json();
+  const data2 = await responseUrl2.json();
+
+  const total1 = data1['@odata.count'];
+  const total2 = data2['@odata.count'];
+
+  return {
+    found: true,
+    comparacao: {
+      quantidadeDocumentos1: total1,
+      quantidadeDocumentos2: total2,
+      diferenca: total1 - total2,
+      percentual:
+        total2 > 0
+          ? ((total1 - total2) / total2) * 100
+          : null
+    }
+  }
+
+}
+
 export async function getAnalysisDocuments(url) {
   const response = await fetch(url);
 
@@ -59,13 +102,13 @@ export async function getAnalysisDocuments(url) {
     };
   }
 
-  
+
   const data = await response.json();
-  
+
   let records = 0;
   if (url.includes("top")) {
     records = data.value.length;
-  }else {
+  } else {
     records = data['@odata.count'];
   }
 
@@ -88,13 +131,13 @@ export async function getFinancialMetrics(url) {
     };
   }
 
-  
+
   const data = await response.json();
-  
+
   let records = 0;
   if (url.includes("top")) {
     records = data.value.length;
-  }else {
+  } else {
     records = data['@odata.count'];
   }
 
@@ -109,7 +152,7 @@ export async function getFinancialMetrics(url) {
 
 export async function getLatestDocuments(url) {
   const response = await fetch(url);
-  
+
   if (!response.ok) {
     return {
       found: false,
@@ -118,7 +161,7 @@ export async function getLatestDocuments(url) {
   }
 
   const data = await response.json();
-  
+
   return {
     found: true,
     data

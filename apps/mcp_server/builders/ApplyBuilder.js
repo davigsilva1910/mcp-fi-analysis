@@ -219,7 +219,7 @@ class ApplyBuilder {
             params.push(`$count=true`);
         }
 
-        if (!applyParts.length && !queryParts.length) {
+        if (!applyParts.length && !params.length) {
             return "";
         }
 

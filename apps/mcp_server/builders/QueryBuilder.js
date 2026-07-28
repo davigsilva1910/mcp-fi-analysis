@@ -23,6 +23,20 @@ class QueryBuilder {
         return this;
     }
 
+    buildFilter() {
+        return this.filters
+            .map(f => {
+                const value =
+                    typeof f.value === "string"
+                        ? `'${f.value}'`
+                        : f.value;
+
+                return `${f.field} ${f.operator} ${value}`;
+            })
+            .join(" and ");
+    }
+
+
     // Método para percorrer todos os argumentos e aplicar os filtros correspondentes com base no mapeamento fornecido
     applyFilters(args, mappings) {
 
@@ -127,7 +141,7 @@ class QueryBuilder {
             params.push(`$count=true`);
         }
 
-        if (!params.length){
+        if (!params.length) {
             return "";
         }
 
