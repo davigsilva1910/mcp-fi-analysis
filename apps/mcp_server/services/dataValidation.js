@@ -11,10 +11,10 @@ export async function dataValidation(anoInicial, anoFinal, mesInicial, mesFinal,
     const anoFim = anoFinal || anoInicial;
 
     const mesIni = mesInicial ?? 1;
-    const mesFim = mesFinal ?? 12;
+    const mesFim = mesFinal || mesInicial !== undefined ? mesInicial : 12;
 
     const diaIni = diaInicial ?? 1;
-    const diaFim = diaFinal || getLastDayOfMonth(anoFim, mesFim); // Aqui passa o ano fim e o mes fim para calcular o último dia do mes
+    const diaFim = diaFinal || diaInicial !== undefined ? diaInicial : getLastDayOfMonth(anoFim, mesFim); // Aqui passa o ano fim e o mes fim para calcular o último dia do mes
 
     const dataInicio = `${anoInicial}${formatTwoDigits(mesIni)}${formatTwoDigits(diaIni)}`;
     const dataFim = `${anoFim}${formatTwoDigits(mesFim)}${formatTwoDigits(diaFim)}`;
