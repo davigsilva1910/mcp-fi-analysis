@@ -51,29 +51,21 @@ export const FILTER_MAP = {
 
 
 export const AGGREGATE_MAP = {
-
-    totalAmount: {
-        field: 'amountInDocumentCurrent',
-        method: 'sum'
+    amountInDocumentCurrent: {
+        sum: "Total",
+        average: "Media",
+        min: "MenorValor",
+        max: "MaiorValor"
     },
 
-    averageAmount: {
-        field: 'amountInDocumentCurrent',
-        method: 'average'
+    lineItem: {
+        $count: "TotalLinhas"
     },
 
-    totalLines: {
-        field: 'lineItem',
-        method: 'count'
-    },
-
-    totalDocuments: {
-        field: 'accountingDocument',
-        method: 'countdistinct'
+    accountingDocument: {
+        $count: "TotalDocumentos"
     }
-
 };
-
 
 export const GROUPBY_MAP = {
 

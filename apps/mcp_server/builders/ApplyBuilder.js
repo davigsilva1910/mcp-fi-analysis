@@ -82,23 +82,30 @@ class ApplyBuilder {
         return this;
     }
 
-    applyAggregates(args) {
+    applyAggregates(args, mapping) {
 
-        if (!args.aggregates) {
+        if(!args.aggregates) {
             return this;
         }
 
-        for (const aggregate of args.aggregates) {
+        for(const arg of args.aggregates) {
+    
+            const alias = mapping[arg.field]?.[arg.func];
+            
+            if(!alias){
+                throw new Error(`Agregação inválida: ${arg.func} não suportado para ${arg.field}`);
+            }
 
             this.aggregate(
-                aggregate.field,
-                aggregate.func,
-                aggregate.alias ||
-                `${aggregate.func}_${aggregate.field}`
+                arg.field,
+                arg.func,
+                alias
             );
+
         }
 
-        return this;
+
+        return this
     }
 
     groupby(field) {

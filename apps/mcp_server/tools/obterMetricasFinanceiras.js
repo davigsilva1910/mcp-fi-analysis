@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { dataValidation } from '../services/dataValidation.js'
 import ApplyBuilder from '../builders/ApplyBuilder.js'
-import { FILTER_MAP, GROUPBY_MAP } from '../builders/filterMapping.js'
+import { AGGREGATE_MAP, FILTER_MAP, GROUPBY_MAP } from '../builders/filterMapping.js'
 import { getFinancialMetrics } from '../providers/capClient.js'
 
 export const obterMetricasFinanceiras = {
@@ -63,7 +63,7 @@ export const obterMetricasFinanceiras = {
                 validationDate.dataFim
             )
             .applyFilters(args, FILTER_MAP)
-            .applyAggregates(args)
+            .applyAggregates(args, AGGREGATE_MAP)
             .applyGroupBy(args, GROUPBY_MAP);
 
 
@@ -86,6 +86,8 @@ export const obterMetricasFinanceiras = {
         const query = builder.build();
 
         const url = `${BASE_URL}${query ? `?${query}` : ""}`;
+
+        console.log(url)
 
         return await getFinancialMetrics(url)
     }

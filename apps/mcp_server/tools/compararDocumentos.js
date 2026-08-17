@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { dataValidation } from '../services/dataValidation.js'
 import ApplyBuilder from '../builders/ApplyBuilder.js';
-import { FILTER_MAP, GROUPBY_MAP } from '../builders/filterMapping.js'
+import { AGGREGATE_MAP, FILTER_MAP, GROUPBY_MAP } from '../builders/filterMapping.js'
 
 import { documentComparison } from '../providers/capClient.js'
 
@@ -14,6 +14,14 @@ export const compararDocumentos = {
     description: `
         Faz comparação de documentos com base no filtro passado, seja por tipo, empresa, cliente, fornecedor, etc.
         Deve ser passado também um período específico para realizar a comparação
+        Retorne em texto explicativo: 
+        - valor total do grupo 1
+        - valor total do grupo 2
+        - diferença de valores
+        - percentual de diferença
+        - quantidade de documentos de cada grupo
+
+        Explique as diferenças de valores totais e de registros, explicando a diferença percentual
     `,
 
     input_schema: z.object({
@@ -42,7 +50,27 @@ export const compararDocumentos = {
         supplier2: z.string().optional(),
         customer2: z.string().optional(),
         currency2: z.string().optional(),
-        accountingDocument2: z.string().optional()
+        accountingDocument2: z.string().optional(),
+
+        aggregates: z.array(
+            z.object({
+                field: z.enum([
+                    "amountInDocumentCurrent",
+                    "accountingDocument",
+                    "lineItem"
+                ]),
+                func: z.enum([
+                    "sum",
+                    "average",
+                    "min",
+                    "max",
+                    "$count"
+                ]),
+                alias: z.string().optional()
+            })
+        ),
+        groupBy: z.array(z.string()).optional()
+
     }),
 
     async execute(args) {
@@ -53,9 +81,13 @@ export const compararDocumentos = {
 
         } = args;
 
+        console.log("Mes inicial " + mesInicial)
+        console.log("Mes final " + mesFinal)
         const paramsGlobal = await dataValidation(
             anoInicial, anoFinal, mesInicial, mesFinal, diaInicial, diaFinal
         )
+
+        console.log(paramsGlobal)
 
         const args1 = {
             companyCode: companyCode1,
@@ -66,7 +98,9 @@ export const compararDocumentos = {
             supplier: supplier1,
             customer: customer1,
             currency: currency1,
-            accountingDocument: accountingDocument1
+            accountingDocument: accountingDocument1,
+            aggregates: args.aggregates,
+            groupBy: args.groupBy
         }
 
         const builder1 = new ApplyBuilder();
@@ -77,7 +111,7 @@ export const compararDocumentos = {
                 paramsGlobal.dataFim
             )
             .applyFilters(args1, FILTER_MAP)
-            .applyAggregates(args1)
+            .applyAggregates(args1, AGGREGATE_MAP)
             .applyGroupBy(args1, GROUPBY_MAP)
             .count();
 
@@ -94,7 +128,9 @@ export const compararDocumentos = {
             supplier: supplier2,
             customer: customer2,
             currency: currency2,
-            accountingDocument: accountingDocument2
+            accountingDocument: accountingDocument2,
+            aggregates: args.aggregates,
+            groupBy: args.groupBy
         };
 
         const builder2 = new ApplyBuilder();
@@ -105,7 +141,7 @@ export const compararDocumentos = {
                 paramsGlobal.dataFim
             )
             .applyFilters(args2, FILTER_MAP)
-            .applyAggregates(args2)
+            .applyAggregates(args2, AGGREGATE_MAP)
             .applyGroupBy(args2, GROUPBY_MAP)
             .count();
 
@@ -113,8 +149,10 @@ export const compararDocumentos = {
 
         const url2 = `${BASE_URL}${query2 ? `?${query2}` : ""}`;
 
-        return await documentComparison(url1, url2);
+        console.log("URL 1: " + url1)
+        console.log("URL 2: " + url2)
 
+        return await documentComparison(url1, url2);
 
     }
 }

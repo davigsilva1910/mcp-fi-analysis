@@ -1,4 +1,8 @@
-export async function periodComparison(urlSoma1, urlSoma2) {
+function hasAggregate(url) {
+  return url.includes("$apply") && url.includes("aggregate(");
+}
+
+export async function periodComparison(urlSoma1, urlSoma2) { 
   const [
     responseSoma1,
     responseSoma2
@@ -71,21 +75,45 @@ export async function documentComparison(url1, url2) {
       message: "Documentos não encontrados"
     };
   }
+
   const data1 = await responseUrl1.json();
   const data2 = await responseUrl2.json();
 
-  const total1 = data1['@odata.count'];
-  const total2 = data2['@odata.count'];
+  const totalRecords1 = data1.value?.[0]?.TotalDocumentos ?? 0;
+  const totalRecords2 = data2.value?.[0]?.TotalDocumentos ?? 0;
+
+  if (hasAggregate(url1)) {
+    const total1 = data1.value?.[0]?.Total ?? 0;
+    const total2 = data2.value?.[0]?.Total ?? 0;
+
+    const diferenca = total1 - total2;
+
+    return {
+    found: true,
+    comparacao: {
+      quantidadeDocumentos1: totalRecords1,
+      quantidadeDocumentos2: totalRecords2,
+      diferencaRecords: totalRecords1 - totalRecords2,
+      total1,
+      total2,
+      diferenca,
+      percentual:
+        totalRecords2 > 0
+          ? ((totalRecords1 - totalRecords2) / totalRecords2) * 100
+          : null
+    }
+  }
+  }
 
   return {
     found: true,
     comparacao: {
-      quantidadeDocumentos1: total1,
-      quantidadeDocumentos2: total2,
-      diferenca: total1 - total2,
+      quantidadeDocumentos1: totalRecords1,
+      quantidadeDocumentos2: totalRecords2,
+      diferenca: totalRecords1 - totalRecords2,
       percentual:
-        total2 > 0
-          ? ((total1 - total2) / total2) * 100
+        totalRecords2 > 0
+          ? ((totalRecords1 - totalRecords2) / totalRecords2) * 100
           : null
     }
   }

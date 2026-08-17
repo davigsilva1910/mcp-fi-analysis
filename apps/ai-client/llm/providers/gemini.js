@@ -105,6 +105,9 @@ export async function callGemini(userQuestion, history = []) {
         const { name, args } =
             functionPart.functionCall;
 
+        console.log("Função chamada: " + name)
+        console.log("Argumentos da função: " + JSON.stringify(args, null, 2))
+
         const toolResponse =
             await mcpClient.callTool({
                 name,
